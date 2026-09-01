@@ -1,7 +1,7 @@
 :root{
     --color1: #fff;
     --color2: #000;
-    bgColor1: yellow;
+    --bgColor1: yellow;
 }
 
 .todo-container{
