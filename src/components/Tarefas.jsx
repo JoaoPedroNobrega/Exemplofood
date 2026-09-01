@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react"
+
+import { useState, useEffect } from 'react'
+import '../css/estilo.css'
 
 const Tarefas = () => {
     // HOOK - useState para armazenar 
     const [tarefas, setTarefas] = useState(() => {
         // LOCALSTORAGE 
         const salvarTarefa = localStorage.getItem("item-tarefa")
-        return SalvarTarefa ? JSON.parse(salvarTarefa) : [];
+        return salvarTarefa ? JSON.parse(salvarTarefa) : [];
 
     });
     //useState para o campo da tarefa
@@ -15,20 +17,57 @@ const Tarefas = () => {
     // ao cadastrar a tarefa aparece automaticamente na tela
 
     useEffect(() => {
-        localStorage.setItem("item-tarefa".JSON.stringify(tarefas));
+        localStorage.setItem("item-tarefa",JSON.stringify(tarefas));
     }, [tarefas])
 
 
     //Função adicionar tarefa
-    const AdicionarTarefa = () => {
-        setTarefas()
+    const AdicionarTarefa = (e) => {
+        // Previne que a página se recarregue
+        e.preventDefault();
+        // Válida o campo se for vazio
+        if (!campo.trim()) return;
+
+        const novaTarefa = {
+
+            id: Date.now(),
+            text: campo,
+        };
+
+        setTarefas([...tarefas, novaTarefa])
+        setCampo('');
+    }
+    // Função remover tarefa
+    const RemoverTarefa = (id) => {
+        const apagarTarefa = tarefas.filter((tarefa) => tarefa.id !== id);
+        setTarefas(apagarTarefa);
     }
 
-
     return (
-        <>
+        <div className='todo-container'>
+            <h1>Minha Lista de Tarefas</h1>
+            <form onSubmit={AdicionarTarefa}>
+                <input
+                    type="text"
+                    value={campo}
+                    onChange={(e) => { setCampo(e.target.value) }}
+                    placeholder="Digite uma tarefa"
 
-        </>
+                />
+                <button type="submit">
+                    Adicionar
+                </button>
+            </form>
+            <ul>
+                {tarefas.map((tarefa) => (
+                    <li key={tarefa.id}>
+                        <span>{tarefa.text}</span>
+                        <button onClick={() => RemoverTarefa(tarefa.id)}>Excluir</button>
+                    </li>
+                ))}
+            </ul>
+            {tarefas.length === 0 && <p>Nenhuma tarefa salva</p>}
+        </div>
 
     )
 }
